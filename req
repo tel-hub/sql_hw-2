@@ -1,0 +1,51 @@
+1. Выполнить расчет З/П менеджеров за весь период заказов из расчета ставки в 10%
+SELECT
+  E.FirstName,
+  E.LastName,
+  SUM(OD.Quantity * P.UnitPrice * 0.1) AS Salary
+FROM
+  ((Employees AS E
+  INNER JOIN Orders AS O ON E.EmployeeID = O.EmployeeID)
+  INNER JOIN OrderDetails AS OD ON O.OrderID = OD.OrderID)
+  INNER JOIN Products AS P ON OD.ProductID = P.ProductID
+
+
+2. Вывести сотрудников, у которых ко-во заказов менее 20
+SELECT
+  E.EmployeeID,
+  E.FirstName,
+  E.LastName,
+  COUNT(O.OrderID) AS OrderCount
+FROM
+  Employees AS E
+  LEFT JOIN Orders AS O ON E.EmployeeID = O.EmployeeID
+GROUP BY
+  E.EmployeeID,
+  E.FirstName,
+  E.LastName
+HAVING
+  COUNT(O.OrderID) < 20;
+  
+  
+3. Вывести названия компаний-перевозчиков и сколько заказов каждая из них доставила
+SELECT
+  Shippers.ShipperName,
+  COUNT(Orders.OrderID) AS OrderCount
+FROM
+  Shippers
+  INNER JOIN Orders ON Shippers.ShipperID = Orders.ShipperID
+GROUP BY
+  Shippers.ShipperName;
+  
+  
+4. Для клиентов из Mexico очистить контактные имена
+UPDATE Customers
+SET ContactName = ''
+WHERE Country = 'Mexico';
+  
+
+5. Описать связи между таблицами, напр., след. образом:
+Orders.CustomerID (M:1) Customers.CustomerID
+
+Это означает, что связь между таблицами Orders и Customers устанавливается по полю CustomerID. В данном случае, связь имеет тип "M:1", что означает "многие к одному". Т.е., множество записей в таблице Orders может быть связано с одной записью в таблице Customers.
+Таким образом, каждый заказ (запись в таблице Orders) имеет связь с определенным клиентом (записью в таблице Customers) по полю CustomerID. Один клиент может иметь множество заказов, но каждый заказ связан только с одним клиентом.
